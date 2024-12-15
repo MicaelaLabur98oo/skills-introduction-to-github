@@ -1,0 +1,2058 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="shortcut icon" href="http://www.rosario.gov.ar/sitio/paginainicial/imagenes/favico.ico" />
+<title>InfoMapa</title>
+
+<script type="text/javascript" src="/emapa/resources/javascript/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="/emapa/resources/javascript/jquery-ui-1.8.23.custom.min.js"></script>
+<script type="text/javascript" src="/emapa/resources/javascript/jquery.layout.min-1.2.0.js"></script>
+<script type="text/javascript" src="/emapa/resources/javascript/jquery.validate.min.js"></script>
+<script type="text/javascript" src="/emapa/resources/javascript/emapa_layers.js?date=20201026"></script>
+<script type="text/javascript" src="/emapa/resources/javascript/emapa_estilos.js?date=20201026"></script>
+<script type="text/javascript" src="/emapa/resources/javascript/jquery.extractor.min.js"></script>
+<script type="text/javascript" src="/emapa/resources/javascript/jquery.printArea.js"></script>
+<!--  -->
+<script type="text/javascript" src="/emapa/resources/javascript/OpenLayers-2.11/OpenLayers.js?date=20201026"></script>
+<script type="text/javascript" src="/emapa/resources/javascript/Direction.js?date=20180611"></script>
+<script type="text/javascript" src="/emapa/resources/javascript/ubicaciones/ubicaciones-compiled.js?v=1_11_8&fix=3"></script>
+
+
+<!-- Este estilo si bien no es el ultimo tiene los cambios realizado por Gregorio -->
+<link type="text/css" href="/emapa/resources/styles/jquery-ui-1.8.23.custom.css?date=20201026" rel="stylesheet" />
+<!--  -->
+<link href="/emapa/resources/styles/font-monserrat.css" rel="stylesheet">
+<link href="/emapa/resources/styles/font-roboto.css" rel="stylesheet">
+<link href="/emapa/resources/styles/font-raleway.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/emapa/resources/styles/ui.dynatree.css"/>
+<link href="/emapa/resources/styles/emapa.css?date=20201026" rel="stylesheet" type="text/css" />
+<link href="/emapa/resources/styles/estilos.css?date=20210921" rel="stylesheet" type="text/css" />
+<link href="/emapa/resources/styles/font-awesome.css" rel="stylesheet">
+<link href="/emapa/resources/styles/font-awesome.css" rel="stylesheet">
+<link href="/emapa/resources/styles/font-glyphicons.css" rel="stylesheet">
+<link href="/emapa/resources/styles/ubicaciones.css?date=20201026" rel="stylesheet" type="text/css" />
+
+
+<style type="text/css">
+/*
+*  Estilo que se utiliza para sacarle el padding al mapa. Cosultarlo con Gregorio
+*/
+
+/*
+.planos{background: none repeat scroll 0 0 #F07D00; border-color: #000000; margin: 2px 0 5px; padding: 2px;}
+*/
+.planos{background-color:#0066CC; border-bottom:1px solid #000000;border-top:1px solid #000000;margin-top: 5px;margin-bottom: 5px; padding: 2px;}
+#contenidoPlanos{ margin: 2px 0 75px; border-bottom:1px solid #0066CC;}
+#titulo_plano{background-color:#0066CC;}
+#cant_planos{margin-left: 5px;}
+/** Estilo que se agrega mediante jquery para que en los navegadores que usan IE10 el mapa quede visible*/
+.ie10{position: fixed !important}
+.ie11{position: relative !important}
+
+
+.logeado{padding-left: 8px;
+    padding-top: 61px;}
+
+
+ #center {padding: 0px!important;}
+ 
+    #menuMedicion{padding: 5px 5px 5px 5px; z-index:9999; position: absolute; top:10px; left:60px; font-size:80%;cursor:move;}
+    
+    /**
+    #toolsflotante { width: 145px; height: 20px; padding: 5px 5px 5px 5px; z-index:9999; position: absolute; top:10px; left:60px; font-size:80%;cursor:move;}
+    #toolsResultadoMedicion { width: 200px; padding: 5px 5px 5px 20px; z-index:9999; position: absolute; top:40px; left:60px; font-size:80%; display:none;cursor:move;}
+*/
+    #toolsResultadoMedicion,#toolsCheckInfocapas { display: none; _width:200px; _height: auto;}
+    
+
+    #descripcionRecorrido {width: 235px; padding: 8px; z-index:9999; position: absolute; top:150px; right:0px; font-size:9px;visibility:hidden;cursor:move;}
+     
+    #descripcionRecorrido dl, #descripcionRecorrido ol {
+    
+    margin:0 0 5px 0;padding:0;
+    height: 300px; overflow:auto; 
+    
+    } 
+    
+    #descripcionRecorrido dt {
+    
+    margin: 5px 0 5px 0;
+    padding:0px;
+    font-weight:bold;
+    
+    }
+    
+    #descripcionRecorrido dd {
+    
+    margin: 0 0 0 5px;
+    padding:0;
+    
+    }
+    
+    #descripcionRecorrido li {
+    
+    margin: 0 0 0 5px;
+    padding:0;
+    list-style:none;
+    
+    }
+    
+    .ubicaciones-li-info {
+    	margin: 8px;
+		padding: 8px;
+		font-family: Montserrat,Arial,"Times New Roman",Times,serif !important;
+		font-size: 13px !important;
+		color: #555555;
+		cursor: pointer;
+		/*border-bottom: 1px solid #DDDDDD;*/
+		float: none !important;
+		text-align: center;
+    }
+     
+    .olFramedCloudPopupContent{ max-width: 100%; max-height: 100%;overflow: auto;_width: 350px;}
+    
+   #descripcionRecorrido .ui-dialog-titlebar { margin-bottom: 8px;}
+   
+   #limpiarResultados { width:100px; text-align: center; margin-top: 10px;}
+   #exportarResultados { width:100px; text-align: center; margin-top: 10px; display: none}
+   #dialog_busca_dir {display: none}
+</style>
+<script type="text/javascript">
+
+/**
+ * Se redefine la funcion OpenLayers.Util.getParameterString que esta declara openlayer.util.js
+ *  para que en el caso de que se este pasando como parametro del filtro de guia productiva un caracter
+ * especial como la "Ñ" para que en vez de hacer encodeURIComponent() haga escape().
+ * para que la url sea aceptada por mapserver
+ * ej. antes se enviaba CABA%C3%91 y ahora envia %D1 que acepta mapserver
+ */
+OpenLayers.Util.getParameterString = function(params) {
+    var paramsArray = [];
+    
+    for (var key in params) {
+      var value = params[key];
+      if ((value != null) && (typeof value != 'function')) {
+        var encodedValue;
+        if (typeof value == 'object' && value.constructor == Array) {
+          /* value is an array; encode items and separate with "," */
+          var encodedItemArray = [];
+          var item;
+          for (var itemIndex=0, len=value.length; itemIndex<len; itemIndex++) {
+            item = value[itemIndex];
+            encodedItemArray.push(encodeURIComponent(
+                (item === null || item === undefined) ? "" : item)
+            );
+          }
+          encodedValue = encodedItemArray.join(",");
+        }else {
+        	
+          /* value is a string; simply encode */
+          if (key == 'FILTER_COMERCIOS' || key == 'FILTER_INDUSTRIA' || key == 'FILTER_CONSTRUCCION'  || key == 'FILTER_SERVICIOS'){
+        	  encodedValue = escape(value);
+          }else{
+        	  encodedValue = encodeURIComponent(value);
+          }
+        }
+        paramsArray.push(encodeURIComponent(key) + "=" + encodedValue);
+      }
+    }
+    
+    return paramsArray.join("&");
+};
+</script>
+
+<script type="text/javascript" charset="ISO-8859-1">
+            
+            var drawControls, ctrlSelectFeatures;
+            OpenLayers.Util.onImageLoadErrorColor = "transparent";
+            var layer_style;
+            var map, measureControls;
+            var info, info_guia, info_codigourbano, info_lugaresinteres, info_internas, info_obs_social, info_catastral, info_renabap;
+            var popupInfo, contentInfoGuia, contentInfoCodigoUrbano, contentInfoPlanoBase, contentInfoLugaresInteres, contenidoObsSocial, contentInfoSPV;
+            var idesf, overlayRosario, overlayCodigoUrbano, overlayinfraestructura, overlayRiesgoClimatico, /*overlaylugares_interes,*/ 
+            overlayIndicadoresSociales, overlayGuiaProductiva, overlayDivisionCiudad, overlayCatastro, overlayRenabap, overlaySPV, overlayCiclovias;
+            //OpenLayers.Popup.FramedCloud.prototype.maxSize = new OpenLayers.Size(200, 200);
+            var vectorLayerTransportePublico, vectorSentidoTUP;
+            var layout;
+            var usuario = null;
+            var infocapasActivadas = new Array();
+            var $i_info;
+            var controlDeBusqueda;
+            var drawControl;
+            
+            
+        function init(){
+        	OpenLayers.ProxyHost = "/wms/proxywms?url=";
+        	// variable que sirve para poder sacar los datos que vienen por json
+        	geojson_format = new OpenLayers.Format.GeoJSON();
+        	
+        	var urlMapa ='https://infomapa.rosario.gov.ar';
+        	var urlMapaBackend ='http://infomapa.rosario.gov.ar';
+            
+        	 // Layer style
+            layer_style = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
+            inicializarEstilo(layer_style);
+            
+            //definicion del mapa
+            var scales = getScales();
+            var resolutions = [];
+            for(var i = 0; i < scales.length; i++) {
+                resolutions.push(OpenLayers.Util.getResolutionFromScale(scales[i], 'm'));
+            }
+            
+            var bounds = getBounds();
+           
+            map = new OpenLayers.Map('map', { maxExtent: bounds , projection:'EPSG:22185', units: 'm', minScale: scales[scales.length - 1], maxScale: scales[0], resolution: resolutions, numZoomLevels: 16, 
+            	controls:[
+                           new OpenLayers.Control.MousePosition(),
+                           new OpenLayers.Control.PanZoomBar(),
+                           new OpenLayers.Control.NavToolbar(),
+                           new OpenLayers.Control.LayerSwitcher(),
+                           new OpenLayers.Control.Attribution()
+                           //new OpenLayers.Control.OverviewMap() descomentar para ver el overvier
+               ]});
+            
+            var ls = map.getControlsByClass('OpenLayers.Control.LayerSwitcher')[0];
+            ls.maximizeControl();
+            
+            personalizarControlLayer(map);
+            
+            var rosarioTematico = new OpenLayers.Layer.WMS( 'Temático', urlMapa + "/wms/planobase?", {layers: ['distritos_descentralizados','rural_metropolitana','manzanas_metropolitana','limites_metropolitana','limite_municipio','sin_manzanas','manzanas','parcelas','manzanas_no_regularizada','espacios_verdes','canteros','av_circunvalacion','avenidas_y_boulevares','sentidos_de_calle','via_ferroviaria','hidrografia','puentes','islas_del_parana','bancos_de_arena','autopistas','nombres_de_calles','numeracion_de_calles'], format: 'image/jpeg', srs: 'EPSG:22185', map_imagetype: 'jpeg'}, {singleTile: false, transitionEffect: 'resize', attribution: "© Municipalidad de Rosario"});
+            var rosarioParcelario = new OpenLayers.Layer.WMS( 'Parcelario', urlMapa + "/wms/planobase?", {layers: ['rural_metropolitana','manzanas_metropolitana','limites_metropolitana','limite_municipio','numeros_de_manzana','sin_manzanas','manzanas','parcelas','manzanas_no_regularizada','espacios_verdes','canteros','av_circunvalacion','avenidas_y_boulevares','segmentos_de_calle','sentidos_de_calle','via_ferroviaria','hidrografia','puentes','islas_del_parana','bancos_de_arena','autopistas','nombres_de_calles','numeracion_de_calles'], format: 'image/jpeg', srs: 'EPSG:22185', map_imagetype: 'jpeg'}, {singleTile: false, transitionEffect: 'resize', attribution: "© Municipalidad de Rosario"});            
+            var rosarioFoto2005 = new OpenLayers.Layer.WMS( 'Fotos Aéreas 2005', urlMapa + "/wms/planobase?", {layers: ['rural_metropolitana','manzanas_metropolitana','limites_metropolitana','FotosAreas2005','avenidas_y_boulevares','sentidos_de_calle','nombres_de_calles','numeracion_de_calles'], styles:['default','default','default','default','img','default','img','img'], format: 'image/jpeg', srs: 'EPSG:22185', map_imagetype: 'jpeg' }, {singleTile: false, transitionEffect: 'resize', attribution: "© Municipalidad de Rosario-Fotos Aéreas 2005"});
+            var rosarioImg2011 = new OpenLayers.Layer.WMS( 'Imagen Satelital 2011', urlMapa + "/wms/planobase?", {layers: ['rural_metropolitana','manzanas_metropolitana','limites_metropolitana','ImagenesSatelitales2011','avenidas_y_boulevares','sentidos_de_calle','nombres_de_calles','numeracion_de_calles'],styles:['default','default','default','default','img','default','img','img'], format: 'image/jpeg', srs: 'EPSG:22185', map_imagetype: 'jpeg' }, {singleTile: false, transitionEffect: 'resize', attribution:"© Municipalidad de Rosario-Imagen Satelital 2011"});
+            var rosarioFoto2013 = new OpenLayers.Layer.WMS( 'Fotos Aéreas 2013', urlMapa + "/wms/planobase?", {layers: ['rural_metropolitana','manzanas_metropolitana','limites_metropolitana','fotos2013','avenidas_y_boulevares','sentidos_de_calle','nombres_de_calles','numeracion_de_calles'],styles:['default','default','default','default','img','default','img','img'], format: 'image/jpeg', srs: 'EPSG:22185', map_imagetype: 'jpeg' }, {singleTile: false, transitionEffect: 'resize', attribution:"© Municipalidad de Rosario-Fotos Aéreas 2013"});
+            var rosarioFoto2022 = new OpenLayers.Layer.WMS( 'Fotos Areas 2022', urlMapa + "/wms/planobase?", {layers: ['rural_metropolitana','manzanas_metropolitana','limites_metropolitana','Img2022','avenidas_y_boulevares','sentidos_de_calle','nombres_de_calles','numeracion_de_calles'],styles:['default','default','default','default','img','default','img','img'], format: 'image/jpeg', srs: 'EPSG:22185', map_imagetype: 'jpeg' }, {singleTile: false, transitionEffect: 'resize', attribution:"© Municipalidad de Rosario-Fotos Areas 2022"});
+            /* recordar que si quiero no mostrar un layer solo tengo que poner:
+            rosarioImg2011.displayInLayerSwitcher=false;
+            */
+                
+            map.addLayers([rosarioTematico,rosarioParcelario,rosarioFoto2005,rosarioImg2011,rosarioFoto2013,rosarioFoto2022]);
+            map.setBaseLayer(rosarioTematico);
+            // ajuste de zoom
+            var centro = bounds.getCenterLonLat();
+            map.setCenter(centro,110000, false, false);
+            map.zoomToScale(75000, false);            
+            
+           popupInfo = new OpenLayers.Popup.FramedCloud(
+                    "chicken", 
+                    map.getLonLatFromPixel(new OpenLayers.Pixel(1,1)),
+                    new OpenLayers.Size(500,500),
+                    "<div id='tabspopup' style='height:300px;width:350px;'><ul><\/ul><\/div>",
+                    {size: new OpenLayers.Size(0,0),offset: new OpenLayers.Pixel(0,0)} ,
+                    true,
+                    null);
+            popupInfo.hide();            
+            
+            map.addPopup(popupInfo);
+            
+            var tabs  = $("#tabspopup" ).tabs();
+            
+            map.events.register("click", map , function(e){
+            	$("#tabspopup").tabs( "remove", "0" );            
+            	$("#tabspopup").tabs( "remove", "1" );
+            	$("#tabspopup").tabs( "remove", "2" );
+            	$("#tabspopup").tabs( "remove", "3" );
+            	$("#tabspopup").tabs( "remove", "4" );
+            	$("#tabspopup").tabs( "remove", "5" );
+            	$("#tabspopup").tabs( "remove", "6" );
+            	popupInfo.hide(); 
+            });
+            
+            $("#tabspopup" ).css("width", "310");
+            
+            // muestra el menu del plano base y los layers
+            
+            //Vector de layer para contener los puntos
+            var vectorLayer = new OpenLayers.Layer.Vector("Vector Puntos", {style: layer_style});
+            //vectorLayer.display(false);
+            vectorLayer.displayInLayerSwitcher=false;
+            
+            // definicion de un punto
+            map.addLayer(vectorLayer);
+            
+            //Vector de layer para contener los lugares de interes
+            var vectorLayerLugares = new OpenLayers.Layer.Vector("Vector Lugares Interes", {style: layer_style});
+            //vectorLayer.display(false);
+            vectorLayerLugares.displayInLayerSwitcher=false;
+            
+            // definicion de un punto
+            map.addLayer(vectorLayerLugares);
+
+            var styleMapTUP = new OpenLayers.StyleMap(
+            		{pointRadius:8, 
+        				//graphicName:"triangle",
+        				rotation : "${angle}",
+        				externalGraphic : "resources/images/flecha-sentido-del-recorrido-"+"${color}"+".png"
+        				//strokeWidth: 1,	
+        				//strokeColor: "#FFFFFF",	
+        				//fillColor: "#000000", 
+        				//fillOpacity: 0.5
+        				});
+            
+            var styleTupParadas = new OpenLayers.Style({}, {
+                rules: [
+                    new OpenLayers.Rule({
+                        maxScaleDenominator: 10000,
+                        symbolizer: {title : "${linea}",
+                        	labelAlign : 'cb',
+                            graphicWidth : 37,
+                            graphicHeight : 27,
+                            //externalGraphic : "resources/images/rect-naranja.gif",
+                            externalGraphic : "resources/images/boton-parada-del-colectivo-opcion-numero-"+"${color}"+".png",
+                            label: "" + "${numero}",
+                            fontColor : "#ffffff",
+                            labelOutlineColor : "#ffffff",
+                            fontSize : 10,
+                            cursor : "pointer",
+                            //labelYOffset : 7,
+                            //labelSelect : true                  
+                            }
+                    }),
+                    new OpenLayers.Rule({
+                        minScaleDenominator: 10000,
+                        maxScaleDenominator: 40000,             
+                        symbolizer: {pointRadius: 6,
+                            strokeWidth : 2, 
+                            //strokeColor : "#666666",
+                            //fillColor : "#F07D00",
+                            externalGraphic : "resources/images//boton-parada-de-colectivo-opcion-chica-"+"${color}"+".png",	 
+                            cursor : "pointer"
+                            }
+                    })
+                ]
+            });
+            
+
+            // Create a vector layer and give it your style map.
+            var styleMapTupParadas = new OpenLayers.StyleMap(styleTupParadas);
+            
+            var vectorLayerComoLlego = new OpenLayers.Layer.Vector("VectorComoLlego", {styleMap: styleMapTupParadas});
+            
+            // hace que si bien esta cargada la capa no aparezca en el controlswicher 
+            vectorLayerComoLlego.displayInLayerSwitcher=false;
+            map.addLayer(vectorLayerComoLlego);
+            
+            vectorLayerTransportePublico = new OpenLayers.Layer.Vector("VectorTransportePublico",{styleMap: styleMapTupParadas});
+            
+            // hace que si bien esta cargada la capa no aparezca en el controlswicher 
+            vectorLayerTransportePublico.displayInLayerSwitcher=false;
+            map.addLayer(vectorLayerTransportePublico);
+
+            vectorSentidoTUP = new OpenLayers.Layer.Vector("VectorSentidoTUP", {styleMap: styleMapTUP});
+            vectorSentidoTUP.displayInLayerSwitcher=false;
+            map.addLayer(vectorSentidoTUP);
+            // metodo para la lista de features 
+            cargarMisBusquedas();
+          //estilos
+            
+                        
+            idesf = new OpenLayers.Layer.WMS( 'Idesf',"https://aswe.santafe.gov.ar/idesf/wms?", {format: 'image/png', srs: 'EPSG:22185', map_imagetype: 'png', transparent: true }, {singleTile: false, transitionEffect: 'resize'});
+            idesf.isBaseLayer = false;
+            idesf.setVisibility(false);
+            idesf.displayInLayerSwitcher=false;
+            map.addLayer(idesf);
+            
+            overlayRosario = new OpenLayers.Layer.WMS( 'planobaseRosario',urlMapa + "/wms/planobase?", {format: 'image/png', srs: 'EPSG:22185', map_imagetype: 'jpeg', transparent: true}, {singleTile: false, transitionEffect: 'resize'});
+            overlayRosario.isBaseLayer = false;
+            overlayRosario.setVisibility(false);
+            overlayRosario.displayInLayerSwitcher=false;
+            map.addLayer(overlayRosario);
+            
+            overlayCodigoUrbano = new OpenLayers.Layer.WMS( 'codigoUrbano',urlMapa + "/wms/codigourbano?", {layers: ['Distritos Urbanos'], format: 'image/png', srs: 'EPSG:22185', map_imagetype: 'png', transparent: true}, {singleTile: false, transitionEffect: 'resize',gutter:20});
+            overlayCodigoUrbano.isBaseLayer = false;
+            overlayCodigoUrbano.setVisibility(false);
+            overlayCodigoUrbano.displayInLayerSwitcher=false;
+            map.addLayer(overlayCodigoUrbano);
+
+            overlayDivisionCiudad = new OpenLayers.Layer.WMS( 'division ciudad',urlMapa + "/wms/divisionesAdministrativas?", {format: 'image/png', srs: 'EPSG:22185', map_imagetype: 'png', transparent: true}, {opacity: 0.75, singleTile: false, transitionEffect: 'resize',gutter:20});
+            overlayDivisionCiudad.isBaseLayer = false;
+            overlayDivisionCiudad.setVisibility(false);
+            overlayDivisionCiudad.displayInLayerSwitcher=false;
+            map.addLayer(overlayDivisionCiudad);
+            
+            overlayinfraestructura = new OpenLayers.Layer.WMS( 'infraestructura',urlMapa + "/wms/infraestructura?", {format: 'image/png', srs: 'EPSG:22185', map_imagetype: 'png', transparent: true}, {singleTile: false, transitionEffect: 'resize',gutter:20});
+            overlayinfraestructura.isBaseLayer = false;
+            overlayinfraestructura.setVisibility(false);
+            overlayinfraestructura.displayInLayerSwitcher=false;
+            map.addLayer(overlayinfraestructura);
+            
+            overlayIndicadoresSociales = new OpenLayers.Layer.WMS( 'observatorio social',urlMapa + "/wms/indicadoressociales?", {layers:['MR'], format: 'image/png', srs: 'EPSG:22185', map_imagetype: 'png', transparent: true}, {opacity: 0.75, singleTile: false, transitionEffect: 'resize'});
+            overlayIndicadoresSociales.isBaseLayer = false;
+            overlayIndicadoresSociales.setVisibility(false);
+            overlayIndicadoresSociales.displayInLayerSwitcher=false;
+            map.addLayer(overlayIndicadoresSociales);
+            
+            overlayRiesgoClimatico = new OpenLayers.Layer.WMS( 'riesgo cambio climatico',urlMapa + "/wms/ambiente?", {layers:['MR'], format: 'image/png', srs: 'EPSG:22185', map_imagetype: 'png', transparent: true}, {opacity: 0.75, singleTile: false, transitionEffect: 'resize'});
+            overlayRiesgoClimatico.isBaseLayer = false;
+            overlayRiesgoClimatico.setVisibility(false);
+            overlayRiesgoClimatico.displayInLayerSwitcher=false;
+            map.addLayer(overlayRiesgoClimatico);
+            
+            /*overlaylugares_interes = new OpenLayers.Layer.WMS( 'lugares_interes',urlMapa + "/wms/lugaresinteres?", {layers: ['MR'], format: 'image/png', srs: 'EPSG:22185', map_imagetype: 'png', transparent: true}, {singleTile: false,gutter:20, transitionEffect: 'resize'});
+            overlaylugares_interes.isBaseLayer = false;
+            overlaylugares_interes.setVisibility(false);
+            overlaylugares_interes.displayInLayerSwitcher=false;
+            map.addLayer(overlaylugares_interes);*/
+            
+            overlayGuiaProductiva = new OpenLayers.Layer.WMS( 'guia productiva',urlMapa + "/wms/guiaproductiva?", {layers: 'WMS-ROSARIO', format: 'image/png', srs: 'EPSG:22185', map_imagetype: 'png', transparent: true}, {singleTile: false, tileOptions: {maxGetUrlLength: 2048},gutter:20});// gutter es para que los iconos no salgan cortados por usar tiles
+            overlayGuiaProductiva.isBaseLayer = false;
+            overlayGuiaProductiva.setVisibility(false);
+            overlayGuiaProductiva.displayInLayerSwitcher=false;
+            map.addLayer(overlayGuiaProductiva);
+            
+            overlayCatastro = new OpenLayers.Layer.WMS( 'catastro',urlMapa + "/wms/catastro?", {layers: ['Catastro'], format: 'image/png', srs: 'EPSG:22185', map_imagetype: 'png', transparent: true}, {singleTile: false, transitionEffect: 'resize',gutter:20});
+            overlayCatastro.isBaseLayer = false;
+            overlayCatastro.setVisibility(false);
+            overlayCatastro.displayInLayerSwitcher=false;
+            map.addLayer(overlayCatastro);
+            
+            overlayRenabap = new OpenLayers.Layer.WMS( 'renabap',urlMapa + "/wms/catastro?", {layers: ['renabap'], format: 'image/png', srs: 'EPSG:22185', map_imagetype: 'png', transparent: true}, {singleTile: false, transitionEffect: 'resize',gutter:20});
+            overlayRenabap.isBaseLayer = false;
+            overlayRenabap.setVisibility(false);
+            overlayRenabap.displayInLayerSwitcher=false;
+            map.addLayer(overlayRenabap);
+            
+            overlaySPV = new OpenLayers.Layer.WMS( 'spv',urlMapa + "/wms/spv?", {layers: ['Barrios'], format: 'image/png', srs: 'EPSG:22185', map_imagetype: 'png', transparent: true}, {singleTile: false, transitionEffect: 'resize',gutter:20});
+            overlaySPV.isBaseLayer = false;
+            overlaySPV.setVisibility(false);
+            overlaySPV.displayInLayerSwitcher=false;
+            map.addLayer(overlaySPV);
+            
+            overlayCiclovias = new OpenLayers.Layer.WMS( 'ciclovias',urlMapa + "/wms/ciclovias?", {layers: ['ciclovia'], format: 'image/png', srs: 'EPSG:22185', map_imagetype: 'png', transparent: true}, {singleTile: false, transitionEffect: 'resize',gutter:20});
+            overlayCiclovias.isBaseLayer = false;
+            overlayCiclovias.setVisibility(false);
+            overlayCiclovias.displayInLayerSwitcher=false;
+            map.addLayer(overlayCiclovias);
+            
+            var fechaEnMiliseg = Date.now();
+            overlayPersonal = new OpenLayers.Layer.WMS( 'personalizada', "wms/capaspersonales.htm?fechaEnMiliseg="+fechaEnMiliseg+"&", {format: 'image/png', srs: 'EPSG:22185', map_imagetype: 'png', transparent: true}, {opacity: 0.6, singleTile: false, transitionEffect: 'resize',gutter:20})
+            overlayPersonal.isBaseLayer = false;
+            overlayPersonal.setVisibility(false);
+            overlayPersonal.displayInLayerSwitcher=false;
+            map.addLayer(overlayPersonal);
+            
+            info_internas = new OpenLayers.Control.WMSGetFeatureInfo({
+                url: "wms/capaspersonales.htm?fechaEnMiliseg="+fechaEnMiliseg+"&",                
+                title: 'Mis Capas',
+                queryVisible: true,
+                infoFormat: 'text/html',
+                eventListeners: {
+                    getfeatureinfo: function(event) {                       
+                       capasPersonales = event.text.trim();
+                       if (capasPersonales.match(/vnd.ogc.se_xml/gi) != null ) {
+                    	   capasPersonales = "Error al consultar Mis Capas";
+                       }
+                       if(capasPersonales != null && capasPersonales != ''){
+                           agregarTab(4,"Mis Capas", -1);
+                           $("#tabsInfo-4").html(capasPersonales);
+                       }
+                       popupInfo.lonlat = map.getLonLatFromPixel(event.xy);                     
+                       popupInfo.show();
+                    }
+                }
+            });
+            map.addControl(info_internas);
+            info_internas.deactivate();
+            
+            
+            info_lugaresinteres = new OpenLayers.Control.WMSGetFeatureInfo({
+                url: urlMapaBackend + "/wms/lugaresinteres?" , 
+                layerUrls : [urlMapa +  "/wms/lugaresinteres?"] ,
+                title: 'Lugares de Interés',
+                queryVisible: true,
+                infoFormat: 'text/html',
+                vendorParams: {QUERY_LAYERS: 'MR', LAYERS: 'MR'},
+                eventListeners: {
+                    getfeatureinfo: function(event) {                    	
+                       contentInfoLugaresInteres = event.text.trim();
+                       if (contentInfoLugaresInteres.match(/vnd.ogc.se_xml/gi) != null ) {
+                    	   contentInfoLugaresInteres = "Error al consultar Lugares de Interés";
+                       }
+                       if(contentInfoLugaresInteres != null && contentInfoLugaresInteres != ''){
+	                       agregarTab(0,"Lugares de Inter&eacute;s", -1);
+	                       $("#tabsInfo-0").html(contentInfoLugaresInteres);
+                       }
+                       popupInfo.lonlat = map.getLonLatFromPixel(event.xy);                     
+                       popupInfo.show();
+                    }
+                }
+            });
+            map.addControl(info_lugaresinteres);
+            info_lugaresinteres.deactivate();
+            
+         // feature para activar el codigoUrbano.wms
+            info_codigourbano = new OpenLayers.Control.WMSGetFeatureInfo({
+                url: urlMapaBackend + '/wms/codigourbano?',  
+                layerUrls: [urlMapa +  "/wms/codigourbano?"] ,
+                title: 'Código Urbano',
+                queryVisible: true,
+                infoFormat: 'text/html',
+                vendorParams: {
+                	QUERY_LAYERS: 'Distritos Urbanos,Grados de Proteccion,Trazado Oficial Aprobado,Trazado desafectado publico,Trazado con inscripcion dominal,Trazado sin cesion a la Municipalidad,clubes_ordenanza_ord_9201_2014', 
+                	LAYERS: 'Distritos Urbanos,Grados de Proteccion,Trazado Oficial Aprobado,Trazado desafectado publico,Trazado con inscripcion dominal,Trazado sin cesion a la Municipalidad,clubes_ordenanza_ord_9201_2014'
+                },
+                eventListeners: {
+                    getfeatureinfo: function(event) {      
+                    	contentInfoCodigoUrbano = event.text.trim();
+                    	if ( contentInfoCodigoUrbano.match(/vnd.ogc.se_xml/gi) != null ) {
+                    		contentInfoCodigoUrbano = "Error al consultar Codigo Urbano";
+                        }
+                    	if(contentInfoCodigoUrbano != null && contentInfoCodigoUrbano != ''){
+                            agregarTab(2,"C&oacute;digo Urbano", 1 );
+                            $("#tabsInfo-2").html(contentInfoCodigoUrbano);
+                        }                    	
+                        popupInfo.lonlat = map.getLonLatFromPixel(event.xy);                        
+                        popupInfo.show();
+                    }
+                }
+            });
+            map.addControl(info_codigourbano);
+            info_codigourbano.deactivate();
+            
+            
+            info_guia = new OpenLayers.Control.WMSGetFeatureInfo({
+                url: urlMapaBackend + "/wms/guiaproductiva?" ,          
+                layerUrls : [urlMapa +  "/wms/guiaproductiva?"] ,
+                title: 'Guía Productiva',
+                queryVisible: true,
+                infoFormat: 'text/html',
+                eventListeners: {
+                    getfeatureinfo: function(event) {                      
+                       contentInfoGuia = event.text.trim();
+                       if ( contentInfoGuia.match(/vnd.ogc.se_xml/gi) != null ) {
+                    	   contentInfoGuia = "Error al consultar Guia Productiva";
+                       }
+                       if(contentInfoGuia != null && contentInfoGuia != ''){
+                           agregarTab(1,"Gu&iacute;a Productiva", -1);
+                           $("#tabsInfo-1").html(contentInfoGuia);
+                       }
+                       popupInfo.lonlat = map.getLonLatFromPixel(event.xy);
+                       popupInfo.show();
+                    }
+                }
+            });
+            map.addControl(info_guia);
+            info_guia.deactivate();
+            
+         // feature para activar datos relacionados al barrio
+         info_barrio = new OpenLayers.Control.WMSGetFeatureInfo({
+        	    url: urlMapaBackend + "/wms/spv?",         
+        	    layerUrls : [urlMapa +  "/wms/spv?"] ,
+                title: 'SPVH',
+                queryVisible: true,
+                infoFormat: 'text/html',
+                vendorParams: {QUERY_LAYERS: 'barrios,asentamientos_irregulares', LAYERS: 'barrios,asentamientos_irregulares'},
+                eventListeners: {
+                    getfeatureinfo: function(event) {                      
+                       contentInfoSPV = event.text.trim();
+                       if ( contentInfoSPV.match(/vnd.ogc.se_xml/gi) != null ) {
+                    	   contentInfoSPV = "Error al consultar SPVH";
+                       }
+                       if(contentInfoSPV != null && contentInfoSPV != ''){
+                    	   agregarTab(5,"SPVH", -1);
+	                       $("#tabsInfo-5").html(contentInfoSPV);
+                       }
+                       popupInfo.lonlat = map.getLonLatFromPixel(event.xy);
+                       popupInfo.show();
+                    }
+                }
+            });
+            map.addControl(info_barrio);
+            info_barrio.deactivate();
+            
+            
+         	// feature para activar el observatorio Social
+            info_obs_social = new OpenLayers.Control.WMSGetFeatureInfo({
+                url: urlMapaBackend + '/wms/indicadoressociales?',
+                layerUrls : [urlMapa +  "/wms/indicadoressociales?"] ,
+                title: 'Observatorio Social',
+                queryVisible: true,
+                infoFormat: 'text/html',
+                vendorParams: {QUERY_LAYERS: '', LAYERS: ''},
+                eventListeners: {
+                	getfeatureinfo: function(event) {                      
+                		contenidoObsSocial = event.text.trim();
+                		if ( contenidoObsSocial.match(/vnd.ogc.se_xml/gi) != null ) {
+                			contenidoObsSocial = "Error al consultar Observatorio Social";
+                    	}
+                        if(contenidoObsSocial != null && contenidoObsSocial != ''){
+                            agregarTab(6,"Observatorio Social", -1);
+                            $("#tabsInfo-6").html(contenidoObsSocial);
+                        }
+                        popupInfo.lonlat = map.getLonLatFromPixel(event.xy);
+                        popupInfo.show();                   
+                     }
+                }
+            });
+            map.addControl(info_obs_social);
+            info_obs_social.deactivate();
+            
+         	// feature para activar capa de catastro
+            info_catastral = new OpenLayers.Control.WMSGetFeatureInfo({
+                url: urlMapaBackend + '/wms/catastro?',                  
+                layerUrls : [urlMapa +  "/wms/catastro?"] ,
+                title: 'Infomación Catastral',
+                queryVisible: true,
+                infoFormat: 'text/html',
+                vendorParams: {QUERY_LAYERS: 'conjuntos_inmobiliarios,parcela_mr', LAYERS: 'conjuntos_inmobiliarios,parcela_mr'},
+                eventListeners: {
+                	getfeatureinfo: function(event) {                      
+                		contenidoCatastral = event.text.trim();
+                		if ( contenidoCatastral.match(/vnd.ogc.se_xml/gi) != null ) {
+                			contenidoCatastral = "Error al consultar Infomación de Catastro";
+                    	}
+                        if(contenidoCatastral != null && contenidoCatastral != ''){
+                            agregarTab(7,"Infomación Catastral", -1);
+                            $("#tabsInfo-7").html(contenidoCatastral);
+                        }
+                        popupInfo.lonlat = map.getLonLatFromPixel(event.xy);
+                        popupInfo.show();                   
+                     }
+                }
+            });
+            map.addControl(info_catastral);
+            info_catastral.deactivate();
+            
+         // feature para activar capa de renabap
+            info_renabap = new OpenLayers.Control.WMSGetFeatureInfo({
+                url: urlMapaBackend + '/wms/catastro?',        
+                layerUrls : [urlMapa +  "/wms/catastro?"] ,
+                title: 'Renabap',
+                queryVisible: true,
+                infoFormat: 'text/html',
+                vendorParams: {QUERY_LAYERS: 'renabap', LAYERS: 'renabap'},
+                eventListeners: {
+                	getfeatureinfo: function(event) {                      
+                		contenidoRenabap = event.text.trim();
+                		if ( contenidoRenabap.match(/vnd.ogc.se_xml/gi) != null ) {
+                			contenidoRenabap = "Error al consultar Infomación de Renabap";
+                    	}
+                        if(contenidoRenabap != null && contenidoRenabap != ''){
+                            agregarTab(8,"Renabap", -1);
+                            $("#tabsInfo-8").html(contenidoRenabap);
+                        }
+                        popupInfo.lonlat = map.getLonLatFromPixel(event.xy);
+                        popupInfo.show();                   
+                     }
+                }
+            });
+            map.addControl(info_renabap);
+            info_renabap.deactivate();
+            
+            
+            info = new OpenLayers.Control.WMSGetFeatureInfo({
+                url: urlMapaBackend +'/wms/planobase?',   
+                layerUrls : [urlMapa +  "/wms/planobase?"] ,
+                title: 'Plano Base',
+                queryVisible: true,
+                infoFormat: 'text/html',
+                vendorParams: {QUERY_LAYERS: 'parcelas,segmentos_de_calle', LAYERS: 'parcelas,segmentos_de_calle', STYLES: ''},
+                eventListeners: {
+                    getfeatureinfo: function(event) {                    	                    	
+                    	contentInfoPlanoBase = event.text.trim();
+                    	if ( contentInfoPlanoBase.match(/vnd.ogc.se_xml/gi) != null ) {
+                    		contentInfoPlanoBase = "Error al consultar Plano Base";
+                    	}
+                    	if(contentInfoPlanoBase != null && contentInfoPlanoBase != ''){
+                            agregarTab(3,"Plano Base", 1);
+                            $("#tabsInfo-3").html(contentInfoPlanoBase);                            
+                        }
+                        popupInfo.lonlat = map.getLonLatFromPixel(event.xy);      
+                        mostrarCartobase(popupInfo.lonlat.lon, popupInfo.lonlat.lat);
+                        popupInfo.show();
+                    }
+                }
+            });
+            map.addControl(info);
+            info.deactivate();
+            
+            infocapasActivadas.push(info); 
+            
+            
+            
+            
+            //este control se puso luego del getfeatureinfo para que funcione solo el selectfeature sin que se dispare el getfeatureinfo
+            selectControl = new OpenLayers.Control.SelectFeature([vectorLayerTransportePublico,vectorLayerComoLlego,vectorLayer,vectorLayerLugares, vectorSentidoTUP],  {onSelect: onFeatureSelect, onUnselect: onFeatureUnselect, multiple: false, clickout: true});
+            map.addControl(selectControl);
+            selectControl.activate();
+            
+            // style the sketch fancy
+            var sketchSymbolizers = {
+                "Point": {
+                    pointRadius: 4,
+                    graphicName: "square",
+                    fillColor: "white",
+                    fillOpacity: 1,
+                    strokeWidth: 1,
+                    strokeOpacity: 1,
+                    strokeColor: "#F07D00"
+                },
+                "Line": {
+                    strokeWidth: 3,
+                    strokeOpacity: 1,
+                    strokeColor: "#F07D00",
+                    strokeDashstyle: "dash"
+                },
+                "Polygon": {
+                    strokeWidth: 2,
+                    strokeOpacity: 1,
+                    strokeColor: "#F07D00",
+                    fillColor: "white",
+                    fillOpacity: 0.3
+                }
+            };
+            
+            var style = new OpenLayers.Style();
+            style.addRules([
+                new OpenLayers.Rule({symbolizer: sketchSymbolizers})
+            ]);
+            
+            var styleMap = new OpenLayers.StyleMap({"default": style});
+            
+            // allow testing of specific renderers via "?renderer=Canvas", etc
+            var renderer = OpenLayers.Util.getParameters(window.location.href).renderer;
+            renderer = (renderer) ? [renderer] : OpenLayers.Layer.Vector.prototype.renderers;
+
+            measureControls = {
+                line: new OpenLayers.Control.Measure(
+                    OpenLayers.Handler.Path, {
+                        persist: true,
+                        handlerOptions: {
+                            layerOptions: {
+                                renderers: renderer,
+                                styleMap: styleMap
+                            }
+                        }
+                    }
+                ),
+                polygon: new OpenLayers.Control.Measure(
+                    OpenLayers.Handler.Polygon, {
+                        persist: true,
+                        handlerOptions: {
+                            layerOptions: {
+                                renderers: renderer,
+                                styleMap: styleMap
+                            }
+                        }
+                    }
+                )
+            };
+            
+            
+            
+            var control;
+            for(var key in measureControls) {
+                control = measureControls[key];
+                control.setImmediate(true);
+                control.events.on({
+                    "measure": handleMeasurements,
+                    "measurepartial": handleMeasurements
+                });
+                map.addControl(control);
+            }
+            
+            var scaleline = new OpenLayers.Control.ScaleLine();
+            map.addControl(scaleline);
+            // Se agrega a los controles del mapa un incono que cumple la misma funcion
+            // que el boton info-capas
+            var $divControl = jQuery('<div/>', {id:"info-capa-icon"});
+            $i_info = $( "<i/>", {
+    			"class": "fa fa-info-circle fa-3x",
+    			"style": "color:#666666",
+    			click: function() {
+    				firstClick();
+    			}
+    		});
+            $i_info.appendTo($divControl);
+            $(".olControlNavToolbar").append($divControl);
+            
+            //$i_info.off('click').on('click', inicializaNavegar());
+            
+            //Agregar Dibujo de Puntos en forma manual
+            var callback_punto = function(result) {
+            	var properties = {
+            			subtipo:'DIRECCIÓN', 
+            			nombreCalle: result.calle.nombre, 
+            			codigoCalle: result.calle.id, 
+            			altura: result.altura,
+            			bis: result.bis,
+            			letra: result.letra
+            	};
+            	var geojson = {type:'Point', coordinates:[result.puntoX, result.puntoY]};
+            	mostrarDireccionOLugarBase(properties, geojson);
+            	//map.getLayersByName('Vector Puntos')[0].removeAllFeatures();
+            }
+            var url_punto = 'https://ws.rosario.gob.ar/ubicaciones/public/direccion/punto';
+            if (location.href.indexOf("https://") != -1) {
+         	   url_punto = url_punto.replace("http://","https://");
+            }
+            drawControl = new OpenLayers.Control.DrawFeature(
+            		vectorLayer, 
+            		OpenLayers.Handler.Point, 
+            		{
+            			eventListeners:{"featureadded": function(event) {ubicaciones.obtenerDireccionDePunto({mapa:{dibujar:'punto',mostrar:'direccion',url_buscar:url_punto}},event.feature.geometry.x,event.feature.geometry.y,null,callback_punto);map.getLayersByName('Vector Puntos')[0].removeFeatures([event.feature])}}
+            		}
+            );
+            map.addControl(drawControl);
+        }        
+        // fin del init
+        
+        function firstClick() {
+        	//$i_info.attr("style","color:#F3831D");
+        	$("#tool-infocapas").click();
+    		//$i_info.off('click').on('click', secondClick);
+	    }
+
+		function secondClick() {
+			//$i_info.attr("style","color:#666666");
+			$("#tool-navegar-infocapas").click();
+		    //$i_info.off('click').on('click', firstClick);
+	   }
+        
+         $(function(){
+            // Accordion
+                $("#accordion").accordion({header: "h3", autoHeight: false,navigation: true, collapsible: true});
+        });
+        
+        function handleMeasurements(event) {
+            var geometry = event.geometry;
+            var units = event.units;
+            var order = event.order;
+            var measure = event.measure;
+            var element = document.getElementById('medir');
+            var out = "";
+            if(order == 1) {
+                out += measure.toFixed(3) + " " + units;
+                $('#medirDistancia').html(out);
+            } else {
+                out +=  measure.toFixed(3) + " " + units + "<sup>2</" + "sup>";
+                $('#medirArea').html(out);
+            }
+        }
+  
+
+        var validator;
+        $(document).ready(        		
+                function () {
+                	var altura = $(window).height() - 52;
+            		$('#content').height(altura);
+            		$('#content').css("overflow","hidden");
+            		//layout = $('body').layout({ applyDefaultStyles: true,
+                   layout = $('#content').layout({ applyDefaultStyles: true,
+                    	onresize: function () {
+                    	    map.updateSize();                    	
+                    	    },
+                   	    onclose: function () {
+                          	map.updateSize();
+                               },
+                        onopen: function () {                            
+                        	map.updateSize();
+                            }
+                           
+               	}); 
+             layout.hide("east");
+             
+             /* Se chequea el caso de que se IE10. de ser asi hay que agregar una clase que corrige errores de visualizacion.
+             */
+             if ($.browser.msie && $.browser.version == 10) {
+                 $("#center").addClass("ie10");
+             }
+             // estilo para que funcione en IE.11
+             if ((/Trident\/7\./).test(navigator.userAgent)) {
+                 $("#center").addClass("ie11");
+             }
+             ejecutarParametrosInicio(); 
+             fixAjusteAltura();
+        });
+        
+      	 // executes when complete page is fully loaded, including all frames, objects and images
+        $(window).load(function() {
+        	init();
+        	/*Se comenta el código que abre el popup de login cuando se ingresa vía https*/
+        	$("body").css("opacity","1");
+        });
+      	
+        $(function() {
+            
+        	$( "#planobase" ).buttonset();
+        	
+        	});
+        
+        $(function() {
+            /*$( "#contacto" ).button({
+                icons: {
+                    primary: "ui-icon-mail-closed"
+                }
+           });
+            $( "#showLogin" ).button({
+                icons: {
+                    primary: "ui-icon-locked"
+                }
+            });
+            $( "#ayuda" ).button({
+                icons: {
+                    primary: "ui-icon-help"
+                }
+           });*/
+           var url = 'https://ws.rosario.gob.ar/ubicaciones/public/geojson/ubicaciones';
+           var urlAlt = 'http://ws.rosario.gov.ar/ubicaciones/public/referenciaalturas';
+           if (location.href.indexOf("https://") != -1) {
+        	   url = url.replace("http://","https://");
+        	   urlAlt = urlAlt.replace("http://","https://");
+           }
+            controlDeBusqueda = $("#txtDireccionesLugares").ubicaciones({
+				filtro:{
+					clase:'ubicacion', //Para filtrar lugares y direcciones
+					filtroclase: {
+						tipo: 'all',//'10',    //Para filtrar tipos de lugares de salud
+						subtipo: 'all'//'22'  //Para filtrar x subtipo hospitales
+					},
+					extendido:false,
+					callback: mostrarDireccionOLugar,
+					url: url,
+					mostrarReferenciasAlturas:true,
+					urlReferenciasAlturas:urlAlt,
+				},
+				minLength: 4,
+				pathImg: 'resources/javascript/ubicaciones/img',
+			});
+            //Cambio ahora el font-family de la cabecera porque si lo hago antes calcula mal la ubicacion de la lista de resultados
+            $(".navbar-brand").css("font-family", "Roboto, sans-serif");
+            $("#txtDireccionesLugares").focus();
+       });
+        
+        $( "#pestanias" ).tabs();
+        
+        /*funcion que hace el llamado para que se carguen las capas de santa fe
+        */
+        var pasosantafe = false;
+        function abrirSantaFe(){
+         if (!pasosantafe){
+             $.post('wms/cargarCapaSantaFe.htm', function(data) {
+                   $('#contenidoCapasSantaFe').html(data);
+             });
+             pasosantafe = true;
+         }
+        }        
+        
+        /*funcion que hace el llamado para que se carguen los links de las lista de planos a buscar
+        */         
+         var pasoplanos = false;
+         function abrirPlanos(){
+             if (!pasoplanos){
+            	 setearlinks(); 
+            	 pasoplanos = true;
+             }
+         }
+         
+         /*funcion que hace el llamado para que se carguen los links de las listas de planos históricos a buscar
+          */         
+           var pasoplanoshisto = false;
+           function abrirPlanosHisto(){
+               if (!pasoplanoshisto){
+              	 setearlinkshisto(); 
+              	 pasoplanoshisto = true;
+               }
+           }
+
+         /*funcion que hace el llamado para que se carguen las capas de codigo Urbano 
+         */
+          var pasocodigoUrbano = false;
+          function abrirCodigoUrbano(){
+           	  if ( !pasocodigoUrbano ){
+           		  $.post('wms/cargarCapasCodigoUrbano.htm', function(data) {
+           	        $('#contenidoCodigoUrbano').html(data);                                    		
+                 });
+           		  pasocodigoUrbano = true;
+           	  }
+          }
+          
+          /*funcion que hace el llamado para que se carguen las capas de infraestructura
+          */           
+           var pasoInfraestructura = false;
+           function abrirInfraestructura(){
+             	  if ( !pasoInfraestructura ){
+             		  $.post('wms/cargarCapasInfraestructura.htm', function(data) {
+             	        $('#contenidoInfraestructura').html(data);                                    		
+                   });
+             		 pasoInfraestructura = true;
+             	  }
+             }
+           
+           /*funcion que hace el llamado para que se carguen las capas de divisiones de la ciudad
+            */  
+            var pasoDivisionesCiudad = false;
+            function abrirDivisionesCiudad(){
+               if ( !pasoDivisionesCiudad ){
+                   $.post('wms/cargarDivisionesCiudad.htm', function(data) {
+                     $('#contenidoDivisionesCiudad').html(data);                                           
+                 });
+                   pasoDivisionesCiudad = true;
+               }
+            }
+           
+            /*funcion que hace el llamado para que se carguen las capas de riesgo cambio climatico
+             */
+                
+           var pasoRiesgoCambioClimatico = false;
+           function abrirRiesgoCambioClimatico(){
+           		if ( !pasoRiesgoCambioClimatico ){
+                	$.post('wms/cargarCapasRiesgoCambioClimatico.htm', function(data) {
+                    	$('#contenidoRiesgoCambioClimatico').html(data);                                         
+                  	});
+                    pasoRiesgoCambioClimatico = true;
+                }
+           }
+             
+           /*funcion que hace el llamado para que se carguen las capas de lugares de interes
+           */          
+           var pasoLugaresInteres = false;
+           function abrirLugaresInteres(){
+           	  if ( !pasoLugaresInteres ){
+           		  $.post('wms/cargarCapasLugaresInteres.htm', function(data) {
+           	        $('#contenidoLugaresInteres').html(data);                                    		
+                 });
+           		pasoLugaresInteres = true;
+           	  }
+           }
+           
+            /*funcion que hace el llamado para que se carguen las capas de indicadores sociales
+            */
+             
+          var pasoIndicadoresSociales = false;
+          function abrirIndicadoresSociales(){
+              if ( !pasoIndicadoresSociales ){
+                  $.post('indicadorSocial/cargarIndicadorSocial.htm', function(data) {
+                    $('#contenidoIndicadoresSociales').html(data);                                           
+                });
+                  pasoIndicadoresSociales = true;
+              }
+           }
+             
+           /*funcion que hace el llamado para que se carguen las capas de indicadores sociales
+           */  
+           var pasoGuiaProductiva = false;
+           function abrirGuiaProductiva(){
+              if ( !pasoGuiaProductiva ){
+                  $.post('guiaProductiva/cargarGuiaProductiva.htm', function(data) {
+                    $('#contenidoGuiaProductiva').html(data);                                           
+                });
+                  pasoGuiaProductiva = true;
+              }
+           }
+           
+           /*funcion que hace el llamado para que se carguen las capas de renabap
+            */  
+            var pasoRenabap = false;
+            function abrirRenabap(){
+               if ( !pasoRenabap ){
+            	   $.post('renabap/cargarRenabap.htm', function(data) {
+                     $('#contenidoRenabap').html(data);                                           
+                   });
+                   pasoRebabap = true;
+               }
+            }
+           
+           /*funcion que hace el llamado para que se carguen las capas de transporte público
+            */  
+            var pasoTrasportePublico = false;
+            function abrirTransportePublico(){
+               if ( !pasoTrasportePublico ){
+                   $.post('tup/cargarTransportePublico.htm', function(data) {
+                     $('#contenidoTransportePublico').html(data);                                           
+                 });
+                   pasoTrasportePublico = true;
+               }
+            }
+            abrirCiclovias
+            /*funcion que hace el llamado para que se carguen las capas de las ciclovias
+             */  
+             var pasoCiclovias = false;
+             function abrirCiclovias(){
+                if ( !pasoCiclovias ){
+                    $.post('wms/cargarCapasCiclovias.htm', function(data) {
+                      $('#contenidoCiclovias').html(data);                                           
+                  });
+                    pasoCiclovias = true;
+                }
+             }
+            
+            /*funcion que hace el llamado para que se carguen las capas de catastro 
+             */
+              var pasoCatastro = false;
+              function abrirCatastro(){
+                  if ( !pasoCatastro ){
+                      $.post('wms/cargarCapasCatastro.htm', function(data) {
+                        $('#contenidoCatastro').html(data);                                         
+                     });
+                      pasoCatastro = true;
+                  }
+              }
+            
+              /*funcion que hace el llamado para que se carguen las capas de catastro 
+               */
+                var pasoSPV = false;
+                function abrirSPV(){
+                    if ( !pasoSPV ){
+                        $.post('wms/cargarCapasSPV.htm', function(data) {
+                          $('#contenidoSPV').html(data);                                         
+                       });
+                        pasoSPV = true;
+                    }
+                }
+              	
+                function abrirFormularioObservacionRecorrido(origen, destino, cuadras, urlComoLlego) {
+                		$.post('/emapa/observacionRecorrido/createObservacion.htm', function(data) {
+            				$('#observacion_pop_up').html(data);
+            				$('#origen').val(origen);
+            				$('#destino').val(destino);
+            				$('#cuadras').val(cuadras);
+            				$('#urlComoLlego').val(urlComoLlego);
+            	        	$('#observacion-form').dialog('open');
+            	    	});
+            	}
+            	
+            
+/**
+*/
+function mostrarCartobase(x, y){
+    $.ajax({
+        type:'POST',
+        url: 'direccion/cartobase.htm',
+        dataType : 'json', 
+        data: {
+         punto_x: x,
+         punto_y: y
+        },
+        success : function(data) {
+               var theHTML = "";
+               if(data.length != 0){
+                   theHTML +=" <table width='242px;'><caption style='background-color: #0066CC; color: #FFFFFF; align:left;'>Cartobase<\caption><tbody>";
+                   for(var i= 0; i< data.length; i ++){
+                       if(data[i].registro_grafico[0] != null){
+                           theHTML += "<tr colspan='2'><td><a href='" +data[i].registro_grafico[0].link+ "' target='_blank' >" + data[i].registro_grafico[0].clave+"<\/a><\/tr><\/td>";
+                       }
+                       if(data[i].catastral[0] != null){
+                         theHTML += "<tr><td><a href='" +data[i].catastral[0].link+ "' target='_blank' >" + data[i].catastral[0].clave+"<\/a><\/tr><\/td>";
+                       }
+                       if(data[i].mayor_area[0] != null){
+                         theHTML += "<tr><td><a href='" +data[i].mayor_area[0].link+ "' target='_blank' >" + data[i].mayor_area[0].clave+"<\/a><\/tr><\/td>";                                     
+                       }
+                       
+                       if(data[i].seccion[0] != null){
+                         theHTML += "<tr><td><a href='" +data[i].seccion[0].link+ "' target='_blank' >" + data[i].seccion[0].clave+"<\/a><\/tr><\/td>";
+                       }
+                   }
+               }else{
+                   theHTML += ""; //No se encontraron datos";
+               }
+               theHTML +="<\/tbody><\/table>";
+               $("#tabsInfo-3").append(theHTML);
+            },
+            error: function() {
+            	return "Se ha producido un error al obtener el cartobase";
+             }
+    }); //cierro el $ajax
+      
+ }
+ 
+ function mostrarDireccion() {
+	 var datos = {nombreCalle : "", altDesde:"", altHasta: "", codigoCalle: "", codigoInterseccion: "", altura: null, _bis: false, letra: "", nombreInterseccion: ""};
+	 var properties = controlDeBusqueda.getValue().properties;
+	 datos.nombreCalle = properties.nombreCalle;
+	 datos.codigoCalle = properties.codigoCalle;
+	 datos.altura = properties.altura;
+	 datos._bis = properties.bis;
+	 datos.letra = properties.letra;
+	 datos.codigoInterseccion = properties.codigoInterseccion==null?"":properties.codigoInterseccion;
+	 datos.nombreInterseccion = properties.nombreInterseccion==null?"":properties.nombreInterseccion;
+	 $.ajax({
+         type:'POST',
+         url: 'direccion/add.htm',
+         dataType : 'json', 
+         data : datos,
+         success : function(data) {
+        	                     if(data != null && data.geoJson != null){
+        	                       agregarPunto(data);
+                                   $("#accordion").accordion( "activate" , 1);
+        	                     }
+        	                     else{
+        	                    	 $("#direccionnoEncontrada").css('visibility', 'visible');
+        	                     }
+                                   
+                 }
+   });
+ }
+ 
+ function mostrarLugar() {
+	 var datos = {nombreCalle : "", altDesde:"", altHasta: "", codigoCalle: "", codigoInterseccion: "", altura: null, _bis: false, letra: "", nombreInterseccion: ""};
+	 var properties = controlDeBusqueda.getValue().properties;
+	 datos.nombreCalle = properties.field_lugar_calle;
+	 datos.codigoCalle = properties.field_lugar_codigo_calle;
+	 datos.altura = properties.field_lugar_altura;
+	 datos._bis = false;
+	 datos.letra = "";
+	 datos.codigoInterseccion = "";
+	 datos.nombreInterseccion = "";
+	 $.ajax({
+         type:'POST',
+         url: 'direccion/add.htm',
+         dataType : 'json', 
+         data : datos,
+         success : function(data) {
+        	                     if(data != null && data.geoJson != null){
+        	                       agregarLugar(data,properties.name);
+                                   $("#accordion").accordion( "activate" , 1);
+        	                     }
+        	                     else{
+        	                    	 $("#direccionnoEncontrada").css('visibility', 'visible');
+        	                     }
+                                   
+                 }
+   });
+ }
+ 
+ function mostrarDireccionOLugar(result) {
+	 //var properties = controlDeBusqueda.getValue().properties;
+	 //mostrarDireccionOLugarBase(properties);
+	 if (result.properties.subtipo!="RANGOS ALTURAS") 
+	 	mostrarDireccionOLugarBase(result.properties, result);
+ }
+ 
+ function getLineasTupToEmapa(lineas) {
+	var lineasTup = [];
+ 	if (lineas) {
+ 		for (var i=0;i<lineas.length;i++) {
+ 			linea = {tipo:null,lineaBandera:lineas[i]};
+ 			lineasTup.push(linea);
+ 		}
+ 	}
+ 	return lineasTup;
+ }
+ 
+ function getDivsAdminToEmapa(divs) {
+	 var divsAdmins = [];
+	 if (divs) {
+	 	for (var i=0;i<divs.length;i++) {
+	 		div = {
+	 				codigo: divs[i].codigo,
+	 				nombreAbrev:divs[i].nombreAbrev,
+	 				tipo:divs[i].tipo,
+	 				valor:divs[i].valor
+	 		}
+	 		divsAdmins.push(div);
+	 	}
+	 }
+	 return divsAdmins;
+ }
+ 
+ function mostrarDireccionOLugarBase(properties, geojson) {
+	 /*var datos = {nombreCalle : "", altDesde:"", altHasta: "", codigoCalle: "", codigoInterseccion: "", altura: null, _bis:"on", bis: false, letra: "", nombreInterseccion: ""};
+	 if (properties.subtipo=="DIRECCIÓN" || properties.subtipo=="DIRRECCIÓN") {
+		 datos.nombreCalle = properties.nombreCalle;
+		 datos.codigoCalle = properties.codigoCalle;
+		 datos.altura = properties.altura==null?"":properties.altura;
+		 datos.bis = properties.bis==null?"":properties.bis;
+		 datos.letra = properties.letra==null?"":properties.letra;
+		 datos.codigoInterseccion = properties.codigoInterseccion==null?"":properties.codigoInterseccion;
+		 datos.nombreInterseccion = properties.nombreInterseccion==null?"":properties.nombreInterseccion;
+	 } else if (properties.subtipo!="CALLE"){
+		 //datos.nombreCalle = properties.field_lugar_calle;
+		 datos.codigoCalle = properties.codigo_calle;
+		 datos.altura = properties.altura==null?"":properties.altura;
+		 datos.bis = properties.bis==null?"":properties.bis;
+		 datos.letra = properties.letra==null?"":properties.letra;
+		 datos.codigoInterseccion = "";
+		 datos.nombreInterseccion = "";
+	 }*/
+	 if (properties.subtipo=="CALLE") {
+		 var val = $("#txtDireccionesLugares").val();
+		 $("#txtDireccionesLugares").val("");
+		 $("#txtDireccionesLugares").focus().val(val);
+	 } else {
+		 if (properties.subtipo=="DIRECCIÓN" || properties.subtipo=="DIRRECCIÓN") {
+			$("#txtDireccionesLugares-loading").css("display","inline");
+			if (properties.codigoInterseccion) {
+				var params = "id1="+properties.codigoCalle+"&id2="+properties.codigoInterseccion;
+				var urlDireccion= 'https://ws.rosario.gob.ar/ubicaciones/public/interseccion?'+params;
+			} else {
+				var params = "idCalle="+properties.codigoCalle+"&altura="+properties.altura+"&bis="+(properties.bis?properties.bis:false);
+				if (properties.letra!=null && properties.letra!='') params += "&letra="+properties.letra;
+				var urlDireccion= 'https://ws.rosario.gob.ar/ubicaciones/public/direccion?'+params;
+			}
+			$.ajax({
+		         type:'GET',
+		         url: urlDireccion,
+		         dataType : 'json', 
+		         success : function(result) {
+		        	var lineasTup = getLineasTupToEmapa(result.lineasTup);
+		        	var divsAdmins = getDivsAdminToEmapa(result.divsAdmins);
+		        	var data = {
+		        		id:result.id,
+		        		altura:result.altura==null?"":result.altura,
+		        		bis:result.bis,
+		        		letra:result.letra==null?"":result.letra,
+		        		divsAdmins:divsAdmins,
+		        		tupBeans:lineasTup,
+		 				geoJson:geojson
+		 			};
+		        	if (result.calle2) {
+		        		data.nombreCalle= result.calle1.nombre;
+		        		data.nombreInterseccion=result.calle2.nombre;
+		        	} else {
+		        		data.nombreCalle=result.calle.nombre;
+		        	}
+		        	agregarPunto(data);
+		        	var active = $("#accordion").accordion( "option", "active" );
+                    if (active!=1)
+	            		$("#accordion").accordion( {active : 1});
+		         },
+		         complete : function() {$("#txtDireccionesLugares-loading").css("display","none");}
+			});
+		 } else { //ES UN LUGAR
+			$("#txtDireccionesLugares-loading").css("display","inline");
+	 		var urlLugar= 'https://ws.rosario.gob.ar/ubicaciones/public/geojson/lugar/'+properties.id+'/true';
+			$.ajax({
+		         type:'GET',
+		         url: urlLugar,
+		         dataType : 'json', 
+		         success : function(result) {
+		         	 var lineasTup = getLineasTupToEmapa(result.properties.lineas_tup);
+			         var divsAdmins = getDivsAdminToEmapa(result.properties.divs_admin);
+		        	 var data = {
+	     				id:result.properties.id,
+	     				altura:result.properties.altura,
+	     				bis:result.properties.bis,
+	     				letra:result.properties.letra==null?'':result.properties.letra,
+	     				nombreCalle:result.properties.calle,
+	     				nombreInterseccion:result.properties.interseccion,
+	     				divsAdmins:divsAdmins,
+	     				tupBeans:lineasTup,
+	     				geoJson:result,
+	     				coordenadas:result.properties.coordenada_ref,
+	     				tipoGeometria:result.properties.tipo_geometria
+	     			};
+		        	agregarLugar(data,result.properties.name.toUpperCase());
+		        	var active = $("#accordion").accordion( "option", "active" );
+                    if (active!=1)
+	            		$("#accordion").accordion( {active : 1});
+		         },
+		         complete : function() {$("#txtDireccionesLugares-loading").css("display","none");}
+			});
+		}/* else {
+			alert("aca");
+			$("#txtDireccionesLugares-loading").css("display","inline");
+			$.ajax({
+		         type:'POST',
+		         url: 'direccion/add.htm',
+		         dataType : 'json', 
+		         data : datos,
+		         success : function(data) {
+		        	       		if(data != null && data.geoJson != null){
+		        	       			if (properties.subtipo=="DIRECCIÓN" || properties.subtipo=="DIRRECCIÓN") {
+		        	       				agregarPunto(data);
+		        	       			} else {
+		        	       				agregarLugar(data,properties.name.toUpperCase());
+		        	                }
+		                            var active = $("#accordion").accordion( "option", "active" );
+		                            if (active!=1)
+		        	            		$("#accordion").accordion( {active : 1});
+		        	            } else{
+		        	            	 $("#direccionnoEncontrada").css('visibility', 'visible');
+		        	            }
+		                                   
+		                 },
+		         complete : function() {$("#txtDireccionesLugares-loading").css("display","none");}
+		  	});
+		}*/
+	 }
+ }
+ 
+
+</script>
+</head>
+<body style="opacity:0;">
+<!-- barra superior -->
+<div class="navbar">
+    <div class="container-navbar">
+    	<div class="navbar-left">
+    		<a class="navbar-brand" style="" href="//infomapa.rosario.gov.ar" target="_blank"><div id="rosario" ></div><h1><span>infomapa.</span>rosario<span>.gob.ar</span></h1></a>
+    	</div>
+    	<div class="navbar-header" style="">
+    		
+            <input type="text" class="form-control" id="txtDireccionesLugares" placeholder="Direcciones o Lugares. Ej: Italia y Mendoza, Mitre 250" autocomplete="off"
+            		onfocus="mostrarInfoBuscador()">
+            <!-- <a class="navbar-brand" href="#"><img src="img/logo.png" alt="Info Mapa"></a> -->
+        </div>
+        <div class="navbar-right" style="">
+        	<div class="navbar-right-aux">
+        		<ul class="list-inline">
+        			
+	            	
+	                <li class="contact-icon">
+	                    <a href="/form/id/contacto_institucional_persona/50" target="_blank" id="contacto">
+	                        <img src="resources/images/mail-icon.png" title="Contacto">
+	                    </a>
+	                </li>
+	                <li class="contact-icon">
+	                    <a href="#" id="ayuda">
+	                        <img src="resources/images/help.png" title="Ayuda">
+	                    </a>
+	                </li>
+	            </ul>
+        		        
+	                
+        		
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>
+<div id="content" style="/*height:80%*/">
+
+<!-- columna izquierda -->
+<div id="colizq" class="ui-layout-west">
+ <div id="accordion">
+  <div>
+   <h3><a href="#">B&uacute;squedas</a></h3>
+   <div>
+    <ul class="submenu">
+ <li>
+  <button id="dialog_busca_dir">Direcciones</button>
+ </li>
+ <li>
+  <button id="dialog_buscar_catastral">Catastrales</button>
+ </li>
+ 
+ <li>
+  <button id="dialog_como_llego">¿C&oacute;mo llego?</button>
+ </li>
+<li>
+  <button id="dialog_nom_calle">Nomenclador de Calles</button>
+ </li>
+</ul>
+   </div>
+  </div>
+  <div>
+   <h3><a href="#">Mis Búsquedas</a></h3>
+   <div id="contenedorResultados">
+   <div id="diva" class="diva">
+    <!--  Aca se inyecta la lista de los features que se van agregando al mapa -->
+   </div>
+   <div id="divFantasia">
+   <!--  Aca se inyecta la lista de los features que se van agregando al mapa -->
+   </div>
+    <div id="palabraClave">
+    <!--  Aca se inyecta la lista de los features que se van agregando al mapa -->
+    </div>
+   <div id="divTitular">
+    <!--  Aca se inyecta la lista de los features que se van agregando al mapa -->
+   </div>
+   <div id="divCodActividad">
+    <!--  Aca se inyecta la lista de los features que se van agregando al mapa -->
+   </div>
+   <div id="divLugarInteres">
+   <!--  Aca se inyecta la lista de los features que se van agregando al mapa -->
+   </div>
+   <div id="botonLimpiarResultados" align="center" style="visibility: hidden;">
+     <button id="limpiarResultados">Limpiar</button>
+   </div>
+   <div id="botonExportarResultados" align="center" style="visibility: hidden;">
+     <button id="exportarResultados">Exportar</button>
+   </div>
+   </div>
+  </div>
+  <div>
+   <h3 ><a href="#" >Mis Recorridos</a></h3>
+   <div id="recorridos">
+     &nbsp;
+    <!--  Aca se inyecta la lista de los features que se van agregando al mapa -->
+   </div>
+  </div>
+  <div id="capasPersonales">
+   <!-- Este es el div en donde se agregaran los menues de las capas personalizadas -->
+  </div>
+   <div>
+     <h3 onclick="abrirTransportePublico();"><a href="#" onclick="abrirTransportePublico();" id="transportePublico">Transporte P&uacute;blico</a></h3>
+     <div id="contenidoTransportePublico" >
+     </div>
+  </div>
+  <!-- 
+  <div>
+     <h3 onclick="abrirCiclovias();"><a href="#" onclick="abrirCiclovias();" id="ciclovias">Ciclov&iacute;as</a></h3>
+     <div id="contenidoCiclovias" >
+     </div>
+  </div>
+   -->
+  <div>
+   <h3 onclick="abrirDivisionesCiudad()"><a href="#" onclick="abrirDivisionesCiudad();" id="divisionesCiudad">Divisiones de la Ciudad</a></h3>
+     <div id="contenidoDivisionesCiudad" >
+     </div>
+  </div>
+  <div> 
+   <h3 onclick="abrirCodigoUrbano()"><a href="#" onclick="abrirCodigoUrbano();" id="codigoUrbano">Normas Urban&iacute;sticas</a></h3>
+     <div id="contenidoCodigoUrbano" >
+     </div>
+  </div>
+   <div>
+   <h3 onclick="abrirInfraestructura()"><a href="#" onclick="abrirInfraestructura()" id="infraestructura">Infraestructura</a></h3>
+     <div id="contenidoInfraestructura" >
+     </div>
+  </div>
+  <div>
+   <h3 onclick="abrirLugaresInteres()"><a href="#" onclick="abrirLugaresInteres()" id="lugaresInteres">Lugares de Inter&eacute;s</a></h3>
+     <div id="contenidoLugaresInteres" >
+     </div>
+  </div>
+   
+  <div>
+   <h3 onclick="abrirSantaFe()"><a href="#" onclick="abrirSantaFe()" id="catastralSantaFe">Informaci&oacute;n Provincial</a></h3>
+     <div id="contenidoCapasSantaFe" >
+     </div>
+  </div>
+  <div>
+   <h3 onclick="abrirRiesgoCambioClimatico()"><a href="#" onclick="abrirRiesgoCambioClimatico()" id="riesgoCambioClimatico">Riesgos Clim&aacute;ticos</a></h3>
+     <div id="contenidoRiesgoCambioClimatico" >
+     </div>
+  </div>
+  <div>
+   <h3 onclick="abrirIndicadoresSociales()"><a href="#" onclick="abrirIndicadoresSociales()" id="indicadoresSociales">Observatorio Social</a></h3>
+     <div id="contenidoIndicadoresSociales" >
+     </div>
+  </div>
+  <div>
+   <h3 onclick="abrirGuiaProductiva()"><a href="#" onclick="abrirGuiaProductiva()" id="guiaProductiva">Gu&iacute;a Productiva</a></h3>
+     <div id="contenidoGuiaProductiva" >
+     </div>
+  </div>
+  <div>
+   <h3 onclick="abrirRenabap()"><a href="#" onclick="abrirRenabap()" id="renabap">Renabap</a></h3>
+     <div id="contenidoRenabap" >
+     </div>
+  </div>
+  
+  <div>
+   <h3><a href="#">Consulta de Planos</a></h3>
+   <div>
+    <ul class="submenu">
+
+
+   
+    <li><button id="menu_planos_mensura">Planos de Mensura</button></li>      
+
+    <li><button id="menu_plano_certificado" >Cert. de Amojonamiento</button></li>
+
+</ul>
+   </div>
+  </div>
+  <div>
+   <h3 onclick="abrirPlanos()"><a href="#" onclick="abrirPlanos()" id="descargaPlanos">Descarga de Mapas Actuales</a></h3>
+   <div>
+    <ul class="submenu" style="margin-bottom:30px">
+	
+	    <li><button id="planoOficialCiudad">Oficial de la Ciudad</button></li>     
+	   
+	    <li><button id="DelimitacionDistritos">Distritos</button></li>      
+	
+	    <li><button id="planoDistritoCentro" >Distrito Centro</button></li>
+	
+	    <li><button id="planoDistritoSur">Distrito Sur</button></li>
+	
+	    <li><button id="planoDistritoNorte">Distrito Norte</button></li>
+	
+	    <li><button id="planoDistritoNoroeste">Distrito Noroeste</button></li>
+	
+	    <li><button id="planoDistritoOeste">Distrito Oeste</button></li>
+	
+	    <li><button id="planoDistritoSudoeste">Distrito Sudoeste</button></li>
+	    
+	    <li><button id="planoSeccionesCatastrales">Secciones Catastrales</button></li>
+	    
+	    <li><button id="planoSeccionesPoliciales">Secciones Policiales</button></li>
+	    
+	    <li><button id="planoBarriosOficiales">Barrios Oficiales</button></li>
+	    
+</ul>
+
+   </div>
+  </div>
+  <div>
+   <h3 onclick="abrirPlanosHisto()"><a href="#" onclick="abrirPlanosHisto()" id="descargaPlanosHisto">Descarga de Mapas Históricos</a></h3>
+   <div>
+    <ul class="submenu" style="margin-bottom:50px">
+		<li><button class="mapaHistorico" id="planoHistoriaPropiedadTerritorial">Historia Propiedad Territorial</button></li>     
+	   
+	    <li><button class="mapaHistorico" id="planoHistoriaPropiedadTerritorial2">Historia Propiedad Territorial (Láminas)</button></li>      
+		
+		<li><button class="mapaHistorico" id="planoMunicipioRosario1895" >Municipio 1895</button></li>
+		
+	    <li><button class="mapaHistorico" id="planoMunicipioRosario1927" >Municipio 1927</button></li>
+	
+	    <li><button class="mapaHistorico" id="planoMunicipioRosario1977" >Municipio 1977</button></li>
+	    
+	    <li><button class="mapaHistorico" id="planoMunicipioRosario1999" >Municipio 1999</button></li>
+	    
+	    <li><button class="mapaHistorico" id="planoNomencladorCalles1999" >Nomenclador de calles 1999</button></li>
+	    
+	    <li><button class="mapaHistorico" id="planoMunicipioRosario2004" >Municipio 2004</button></li>
+	    
+	    <li><button class="mapaHistorico" id="planoNomencladorCalles2004" >Nomenclador de calles 2004</button></li>
+	    
+	    <li><button class="mapaHistorico" id="planoMunicipioRosario2007" >Municipio 2007</button></li>
+	    
+	    <li><button class="mapaHistorico" id="planoNomencladorCalles2007" >Nomenclador de calles 2007</button></li>
+	    
+	    <li><button class="mapaHistorico" id="planoMunicipioRosario2009" >Municipio 2009</button></li>
+	    
+	    <li><button class="mapaHistorico" id="planoNomencladorCalles2009" >Nomenclador de calles 2009</button></li>
+	    
+	    <li><button class="mapaHistorico" id="planoMunicipioRosario2011" >Municipio 2011</button></li>
+	    
+	    <li><button class="mapaHistorico" id="planoNomencladorCalles2011" >Nomenclador de calles 2011</button></li>
+	    
+	    <li><button class="mapaHistorico" id="planoMunicipioRosario2013" >Municipio 2013</button></li>
+	    
+	    <li><button class="mapaHistorico" id="planoNomencladorCalles2013" >Nomenclador de calles 2013</button></li>
+</ul>
+
+   </div>
+  </div>
+  <div id="contenidoExterno"></div>  
+ </div>
+ 
+</div>
+<!-- finaliza la columna izquierda -->
+<!-- columna derecha -->
+<div id="colder" class="ui-layout-east" style="background-color: #EFEFEF">
+<div id="resultado_planos">
+ <div  class="planos">
+  <span id="tituloPlanos">
+  </span>
+  <div id="close_planos" class="close_planos">
+  <a class="ui-dialog-titlebar-close ui-corner-all" href="#" onclick="closeLayOut('east');">
+   <span class="ui-icon ui-icon-closethick">close</span>
+  </a>
+  </div>
+ </div>
+ <div style="margin-bottom: 5px;"><label><span id="cant_planos"></span> con <span id="criterio_planos"></span></label></div>
+ <div id="contenidoPlanos"></div>
+</div>
+</div>
+
+<!--  centro o mapa -->
+<div id="center" class="ui-layout-center">
+
+ <div id="map"></div>
+ 	<script  type="text/javascript">
+	$(function() {
+		$( "#menuMedicion" ).draggable();
+		 $( "#descripcionRecorrido" ).draggable({ handle: "div" });
+		
+		$( "#tool-marcardir").button();
+		$( "#tool-medir").button();
+		$( "#tool-imprimir").button();
+		$( "#tool-infocapas").button();
+		$( "#tool-guardar").button();
+		inicializarMarcarDireccion();
+		inicializarMedir();
+		incializarInfocapas();
+		$('#tool-guardar').click(function(evt) {
+			var mapaprint = $("#map >div >div >div").first();
+            html2canvas(mapaprint, {
+                onrendered: function(canvas) {
+                document.body.appendChild(canvas);
+                }
+                });
+            /**
+			evt.preventDefault();
+            var dialogHtml = $('#map').html();
+
+            var h2cSelector, h2cOptions;
+            $(dialogHtml).dialog({  width: 750, height: 530 ,title: 'guardar mapa', create: function(event, dialogHtml) {
+            	var mapa = document.getElementById("map");
+            	h2cSelector = [mapa];
+                if (window.setUp) {
+                    window.setUp();
+                }
+                setTimeout(function() {
+                    $(h2cSelector).html2canvas({
+                        flashcanvas: "../external/flashcanvas.min.js",
+                        logging: true,
+                        profile: true,
+                        useCORS: true
+                    });
+                }, 100);
+                             
+           
+                
+            } ,buttons: {
+            	'guardar': function() {
+            		//lo que quieras hacer cuando se pulsa aceptar
+            		}}
+            });
+			  */
+        });
+	
+		$('#tool-imprimir').click(function(evt) {
+			$("#printarea").attr('src','mapaImprime.jsp');
+			$("#logoImprime").css('visibility', 'visible');
+			//myWindow=window.open('mapaImprime.jsp','Impresion','width=400,height=400');
+        });
+	});
+	
+	function inicializarMarcarDireccion(){
+		$("#tool-marcardir").click( function(event){
+			event.preventBubble=true;
+            event.stopPropagation();
+			desactivarInfocapas();
+			desactivarMedir();
+			drawControl.activate();
+            $("#tool-marcardir").replaceWith("<a id='tool-navegar-marcardir' href='#'>Navegar<\/a>");
+            $( "#tool-navegar-marcardir").button();
+            inicializaNavegarMarcarDir();            
+         });
+	}
+	
+	function inicializarMedir(){
+		$("#tool-medir").click( function(event){
+			event.preventBubble=true;
+            event.stopPropagation();
+			desactivarInfocapas();
+			desactivarMarcarDireccion();
+            $("#toolsResultadoMedicion").show("fast");
+            measureControls['line'].activate();
+            $("#tool-medir").replaceWith("<a id='tool-navegar' href='#'>Navegar<\/a>");
+            $( "#tool-navegar").button();
+            inicializaNavegar();            
+         });
+	}
+	
+	function incializarInfocapas(){
+		$("#tool-infocapas").click( function(event){
+			event.preventBubble=true;
+    		event.stopPropagation();
+    		desactivarMarcarDireccion();
+			desactivarMedir();
+			$("#toolsCheckInfocapas").empty();
+			map.getControlsByClass("OpenLayers.Control.NavToolbar")[0].controls[0].deactivate();
+			map.getControlsByClass("OpenLayers.Control.NavToolbar")[0].controls[1].deactivate();
+			//$(".olControlZoomBoxItemInactive").css('visibility', 'hidden');
+			
+			var $divContenedor = jQuery('<p/>', {id:'contenedorChecks',  "class": "diva"});
+			for ( var i = 0; i < infocapasActivadas.length; i++) {
+				var element = infocapasActivadas[i];
+			    element.activate();
+			    $divContenedor.append(agregarCheckFeatureInfo(element));
+			}
+			$("#toolsCheckInfocapas").append($divContenedor);
+			$("#tool-infocapas").replaceWith("<a id='tool-navegar-infocapas' href='#'>Navegar<\/a>");
+	        $( "#tool-navegar-infocapas").button();
+	        $("#toolsCheckInfocapas").show("fast");
+	        inicializaNavegarInfomapas();
+	        
+	        $i_info.attr("style","color:#0066CC");  /*#F3831D*/      	
+    		$i_info.off('click').on('click', secondClick);
+    		
+       });
+	}
+	
+	function inicializaNavegar(){
+		$("#tool-navegar").click( function(event){
+			event.preventBubble=true;
+    		event.stopPropagation();
+    		desactivarMedir();
+            //inicializarMedir();
+            
+         });
+	}
+	
+	function inicializaNavegarMarcarDir(){
+		$("#tool-navegar-marcardir").click( function(event){
+			event.preventBubble=true;
+    		event.stopPropagation();
+    		desactivarMarcarDireccion();
+            //inicializarMedir();
+            
+         });
+	}
+	
+	function inicializaNavegarInfomapas(){
+		$("#tool-navegar-infocapas").click( function(event){
+			 event.preventBubble=true;
+	    	event.stopPropagation();
+            desactivarInfocapas();
+            //incializarInfocapas();           
+         });
+	}
+	
+	function desactivarMarcarDireccion(){
+		drawControl.deactivate();
+        $("#tool-navegar-marcardir").replaceWith("<a id='tool-marcardir' href='#' >Marcar Dirección<\/a>");
+        $("#tool-marcardir").button();
+        inicializarMarcarDireccion();
+	}
+	
+	function desactivarMedir(){
+		$("#toolsResultadoMedicion").hide("fast");
+        measureControls['line'].deactivate();
+        measureControls['polygon'].deactivate();
+        $("#tool-navegar").replaceWith("<a id='tool-medir' href='#' >Medir<\/a>");
+        $("#tool-medir").button();
+        inicializarMedir();
+	}
+	
+	function desactivarInfocapas(){
+		$("#toolsCheckInfocapas").hide("fast");
+		//$(".olControlZoomBoxItemInactive").css('visibility', 'visible');
+		map.getControlsByClass("OpenLayers.Control.NavToolbar")[0].controls[0].activate();
+		map.getControlsByClass("OpenLayers.Control.NavToolbar")[0].controls[1].deactivate();
+		for ( var i = 0; i < infocapasActivadas.length; i++) {
+			var element = infocapasActivadas[i];
+		    element.deactivate();
+		}
+        $("#tool-navegar-infocapas").replaceWith("<a id='tool-infocapas' href='#'>Info Capas<\/a>");
+        $( "#tool-infocapas").button();
+        
+        $i_info.attr("style","color:#666666");        	
+		$i_info.off('click').on('click', firstClick);
+		
+		incializarInfocapas();
+		selectControl.deactivate();
+		selectControl.activate();
+	}
+	
+	function toggleControl(element) {
+	       for(key in measureControls) {
+	           var control = measureControls[key];
+	           if(element.value == key && element.checked) {
+	               control.activate();
+	           } else {
+	               control.deactivate();
+	           }
+	       }
+	   }
+	
+	function cerrarRecorrido(){
+		 $("#descripcionRecorrido").css('visibility','hidden');
+	 }
+	
+	function mostrarInfoBuscador() {
+		if ($("#txtDireccionesLugares").val().trim().length==0) {	
+			var html = '<li class="ubicaciones-li-info" label-value="" ubicaciones-clase="ubicacion" tabindex="-1"><span class="ubicaciones-li-info">Puede buscar direcciones o lugares de interés de la ciudad de Rosario.</span>';
+			html+='<br/><span class="ubicaciones-li-info">Ejemplos de direcciones con Bis o Letra: Francia 50 bis, Corrientes 4550 A.</span>';
+			html+='<br/><span class="ubicaciones-li-info">Ejemplos de lugares: Terminal de Omnibus, Monumento a la Bandera.</span>';
+			$("#txtDireccionesLugares-ul").html(html);
+			$("#txtDireccionesLugares-ul").css("display","block");
+		}
+	}
+	</script>
+
+    <div id="menuMedicion" class="ui-widget-content">
+	     <!--  barra de menu flotante medir, guardar imprimir -->
+		<div id="toolsflotante">
+			<a id="tool-infocapas" href="#">Info Capas</a>
+			<a id="tool-marcardir" href="#">Marcar Dirección</a>
+			<a id="tool-medir" href="#">Medir</a>
+			<a id="tool-imprimir" href="#">Imprimir</a>
+			<!-- momentaneamente desconectado hasta que se revise 
+			<a id="tool-guardar" href="#">Guardar</a>
+			 -->
+			 <div id="logoImprime" class="loading" style="margin-top: -26px; margin-left: 20px;visibility: hidden;"></div>
+		</div>
+		<!--  barra de menu flotante para seleccionar el tipo de medicion -->
+		<div id="toolsResultadoMedicion">
+	       <input name="type" value="line" id="lineToggle" type="radio" checked="checked" onclick="toggleControl(this);"/>
+	       <label for="lineToggle" class="check_infocapas">Distancia: </label><span id="medirDistancia" class="check_infocapas"></span><br/>
+	       
+	       <input name="type" value="polygon" id="polygonToggle" type="radio" onclick="toggleControl(this);"/>
+	       <label for="polygonToggle" class="check_infocapas">&Aacute;rea: </label> <span id="medirArea" class="check_infocapas"></span>
+	    </div>
+	    <div id="toolsCheckInfocapas">
+	      
+	    </div>
+	</div>
+	<div id="descripcionRecorrido" class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable">
+    </div>
+</div>
+
+   
+<script type="text/javascript">
+    // Dialog Link
+     $( "#dialog_busca_dir" ).button({ 
+            icons: {
+                primary: "ui-icon ui-icon-arrowthickstop-1-s"
+            }
+       });
+    $('#dialog_busca_dir').click(function() {
+    	$.post('/emapa/direccion/create.htm', function(data) {
+    		   $('#direccion_pop_up').html(data);
+    		   $('#direccion-form').dialog('open');
+    	});
+        return false;
+     });
+</script>
+
+<script type="text/javascript">
+
+$( "#dialog_buscar_catastral" ).button({
+    icons: {
+        primary: "ui-icon ui-icon-arrow-4-diag"
+    }
+});
+    // Dialog Link
+    $('#dialog_buscar_catastral').click(function() {
+        $.post('/emapa/catastral/create.htm', function(data) {
+               $('#catastral_pop_up').html(data);
+               $('#catastral-form').dialog('open');
+        });
+        return false;
+     });
+</script>
+<script type="text/javascript">
+
+$( "#dialog_como_llego" ).button({
+    icons: {
+        primary: "ui-icon ui-icon-suitcase"
+    }
+});
+
+    // Dialog Link
+    $('#dialog_como_llego').click(function() {
+        $.post('/emapa/tup/comoLLego.htm', function(data) {
+               $('#como_llego_pop_up').html(data);
+               $("#ui-dialog-title-como-llego-form").html('&iquest;C&oacute;mo LLego?');
+               $("#row-destino").css("display","table-row");
+               $("#combinacionSinResultados").css("display","none");
+               $("#origenIncorrecto").css("display","none");
+               $("#destinoIncorrecto").css("display","none");
+               $("#como-llego-form" ).dialog({
+            	   width: 500,
+            	   autoOpen: false,
+               });
+               $('#como-llego-form').dialog('open');
+               $("#mensajeNuevoComoLlego").css("display","block");	
+           	   $("#divFormDir").css("display","none");
+           	   $("#divSelectCuadras").css("display","none");
+               
+        });
+        return false;
+     });
+</script>
+<script type="text/javascript">
+    // Dialog Link
+     $( "#dialog_nom_calle" ).button({ 
+            icons: {
+                primary: "ui-icon ui-icon-arrowthickstop-1-s"
+            }
+       });
+    $('#dialog_nom_calle').click(function() {
+        $.post('/emapa/nomenclador/createNomencladorCalle.htm', function(data) {
+               $('#nomencladorCalle_pop_up').html(data);
+               $('#nomenclador-calles-form').dialog('open');
+        });
+        return false;
+     });
+</script>
+<script type="text/javascript">
+    $('#contacto').click(function() {
+        $.post('/emapa/contacto/createContacto.htm', function(data) {
+               $('#contacto_pop_up').html(data);
+               $('#contacto-form').dialog('open');
+        });
+        return false;
+     });
+</script>
+<script type="text/javascript">
+    $('#ayuda').click(function() {
+        $.post('/emapa/contacto/createAyuda.htm', function(data) {
+               $('#ayuda_pop_up').html(data);
+               $('#ayuda-form').dialog('open');
+        });
+        return false;
+     });
+</script>
+<script type="text/javascript">
+    $('#showLogin').click(function() {
+    	 	  $.post('/emapa/seguridad/createLogin.htm', function(data) {
+                  $('#login_pop_up').html(data);
+                  $('#dialogoLogin').dialog('open');
+           });
+         
+    	<!-- 
+        return false;
+     });
+</script>
+<script type="text/javascript">
+    // Dialog Link
+    $( "#menu_planos_obra" ).button({ 
+          icons: {
+                primary: "ui-icon ui-icon-arrow-4-diag"
+          }
+    });
+    
+    $( "#menu_planos_mensura" ).button({ 
+        icons: {
+              primary: "ui-icon ui-icon-arrow-4-diag"
+        }
+  });
+    
+    
+    $( "#menu_plano_certificado" ).button({ 
+        icons: {
+              primary: "ui-icon ui-icon-arrow-4-diag"
+        }
+  });
+    
+    
+    
+$('#menu_planos_obra').click(function() {
+    $.post('/emapa/planos/crearplanosobra.htm', function(data) {
+           $('#planos_pop_up').html(data);
+           $('#planos-form').dialog('open');
+    });
+    return false;
+ });
+
+$( "#menu_planos_mensura").click(function() {
+    $.post('/emapa/planos/crearplanosmensura.htm', function(data) {
+           $('#planos_pop_up').html(data);
+           $('#planos-form-mensura').dialog('open');
+    });
+    return false;
+ });
+ 
+$( "#menu_plano_certificado").click(function() {
+    $.post('/emapa/planos/crearcertificadoamojonamiento.htm', function(data) {
+           $('#planos_pop_up').html(data);
+           $('#form-certificado-amojonamiento').dialog('open');
+    });
+    return false;
+ });
+</script>
+
+<div id="direccion_pop_up"></div>
+<div id="catastral_pop_up"></div>
+<div id="como_llego_pop_up"></div>
+<div id="contacto_pop_up"></div>
+<div id="ayuda_pop_up"></div>
+<div id="login_pop_up"></div>
+<div id="guia_prod_pop_up"></div>
+<div id="lugares_interes_pop_up"></div>
+<div id="nomencladorCalle_pop_up"></div>
+<div id="planos_pop_up"></div>
+<div id="observacion_pop_up"></div>
+  
+<iframe id="printarea" title="InfoMapa" src=""></iframe>
+</div>
+</body>
+</html>
+
+
